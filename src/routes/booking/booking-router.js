@@ -10,8 +10,8 @@ bookingRouter
   .post(express.json(), async (req, res, next) => {
     
     //grab data from body and turn it into an object
-    const { email, name, address, booking_type, booking_date, bokking_time } = req.body;
-    const newBooking = { email, name, address, booking_type, booking_date, bokking_time };
+    const { email, name, address, booking_type, booking_date, booking_time } = req.body;
+    const newBooking = { email, name, address, booking_type, booking_date, booking_time };
     
     //validate data
     const validBooking = BookingSchema.validate(newBooking);
@@ -19,26 +19,29 @@ bookingRouter
       return next({status: 400, message: validBooking.error.details[0].message});
     }
 
-    //add booking to database
-    const insertedBooking = await BookingService.createBooking(req.app.get('db'), newBooking);  
-    console.log(insertedBooking)
-    //if there is a problem, let the user know
-    if(!insertedBooking) { return res.status(500).send({message: 'Error saving place.'}); }
-    
-    //send back the added booking
-    return res.status(201).json(insertedBooking);
+    try {
+      //add booking to database
+      const insertedBooking = await BookingService.createBooking(req.app.get('db'), newBooking);  
+      //send back the added booking
+      return res.status(201).json(insertedBooking);
+      
+    } catch (e){
+      //if there is a problem, log it. Also let the user know theres an error.
+       next({status: 500, message: e.message});
+    }
   })
   .get(async (req, res, next) => {
+    const { page = 1, filter = '', ordering={column: 'booking_date', direction: 'asc'} } = req.query; 
+    //default page is 1, no default filtering, default ordering is by column in ascending order.
 
-    //grab all bookings from db
-    const bookings = await BookingService.getBookings(req.app.get('db'));
-    console.log(bookings)
-    //if no bookings let client know
-    if(!bookings) return res.status(200).json({message: 'No bookings'});
-
-    //send back bookings
-    return res.status(200).json(bookings);
-
+    try{
+      //grab all bookings from db
+      const bookings = await BookingService.getBookings(req.app.get('db'), page, filter, ordering);
+      return res.status(200).json(bookings);
+    } catch (e){
+      //if there is a problem, log it. Also let the user know theres an error.
+      next({status: 500, message: e.message});
+    }
   });
   
 module.exports = bookingRouter;

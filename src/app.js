@@ -8,7 +8,7 @@ const helmet = require('helmet');
 const { errorHandler } = require('./util/error_handling');
 const { cors_Settings } = require('./util/cors_settings');
 const { morgan_settings } = require('./util/logging-winston_morgan');
-const bookingRouter = require ('./routes/booking-router');
+const bookingRouter = require ('./routes/booking/booking-router');
 
 const app = require('express')();
 

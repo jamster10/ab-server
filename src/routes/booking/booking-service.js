@@ -3,19 +3,36 @@ const xss = require('xss');
 
 const PlacesService = {
   
+  getBookings(db, page, filterBy, ordering) {
+    if (filterBy){
+      return db('bookings')
+        .where('booking_type', filterBy)
+        .paginate(3, page, ordering)
+        .then(bookings => {
+          bookings.data = bookings.data.map(booking => this.serializeBooking(booking));//send back the
+          return bookings; //send back the newly created booking
+        });
+    } else {
+      return db('bookings')
+        .paginate(3, page, ordering)
+        .then(bookings => {
+          bookings.data = bookings.data.map(booking => this.serializeBooking(booking));//send back the
+          return bookings; 
+        });
+    }
+  },
   createBooking(db, newBooking) {
     return db
       .insert(newBooking)
       .into('bookings')
-      .returning('*')
-      .then(newBooking => newBooking[0]);
-
+      .then(([newBookingId]) => this.getBooking(db, newBookingId));
   },
-  getBookings(db) {
+  getBooking(db, id) {
     return db
       .select('*')
       .from('bookings')
-      .then(bookings => bookings.map(booking => this.serializeBooking(booking)));
+      .where({id})
+      .then(([booking]) => this.serializeBooking(booking));
   },
   //protect from xss on fields where possible as joi validations prevent other cases
   serializeBooking(booking) {

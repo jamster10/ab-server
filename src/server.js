@@ -1,17 +1,26 @@
 'use strict';
 const app = require('./app');
-const { PORT, DB_URL, NODE_ENV } = require('./config');
+const { PORT, DB_URL, NODE_ENV, db } = require('./config');
 const knex = require('knex');
+const KnexQueryBuilder = require('knex/lib/query/builder');
+require('./util/paginate-knex')(KnexQueryBuilder); //add a function to paginate Knex
 
-const db = knex({
+//create connection to mysql database
+const knexInstance = knex({
   client: 'mysql',
-  connection: DB_URL
+  connection: {
+    host : db.HOST,
+    user : db.USER,
+    password : db.PASS,
+    database : db.DB_NAME
+  }
 });
 
-app.set('db', db);
+//attach db instance to global app
+app.set('db', knexInstance);
 
 app.listen(PORT, () => {
   if (NODE_ENV !== 'production') {
-    console.log('Welcome to the MaTriX', PORT);
+    console.log('Welcome to the MaTriX', 8080);
   }
 });

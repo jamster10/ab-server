@@ -12,5 +12,4 @@ module.exports = {
     }
     res.status(err.status || 500).json(response);
   }
-
 };
