@@ -1,0 +1,11 @@
+/* global request, expect */
+'use strict';
+const app = require('../src/app');
+
+describe('App', () => {
+  it('GET / responds with 200 containing "Hello, world!"', () => {
+    return request(app)
+      .get('/')
+      .expect(200, 'Hello World!');
+  });
+});
