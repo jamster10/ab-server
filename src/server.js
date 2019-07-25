@@ -4,7 +4,7 @@ const { PORT, DB_URL, NODE_ENV } = require('./config');
 const knex = require('knex');
 
 const db = knex({
-  client: 'pg',
+  client: 'mysql',
   connection: DB_URL
 });
 
