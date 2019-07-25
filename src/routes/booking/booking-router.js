@@ -36,7 +36,7 @@ bookingRouter
 
     try{
       //grab all bookings from db
-      const bookings = await BookingService.getBookings(req.app.get('db'), page, filter, ordering);
+      const bookings = await BookingService.getBookings(req.app.get('db'), Number(page), filter, ordering);
       return res.status(200).json(bookings);
     } catch (e){
       //if there is a problem, log it. Also let the user know theres an error.
