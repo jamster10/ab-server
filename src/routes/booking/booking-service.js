@@ -7,14 +7,14 @@ const PlacesService = {
     if (filterBy){
       return db('bookings')
         .where('booking_type', filterBy)
-        .paginate(3, page, ordering)
+        .paginate(20, page, ordering)
         .then(bookings => {
           bookings.data = bookings.data.map(booking => this.serializeBooking(booking));//send back the
           return bookings; //send back the newly created booking
         });
     } else {
       return db('bookings')
-        .paginate(3, page, ordering)
+        .paginate(20, page, ordering)
         .then(bookings => {
           bookings.data = bookings.data.map(booking => this.serializeBooking(booking));//send back the
           return bookings; 
