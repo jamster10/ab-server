@@ -16,7 +16,7 @@ bookingRouter
     //validate data
     const validBooking = BookingSchema.validate(newBooking);
     if (validBooking.error) {
-      return next({status: 400, message: validBooking.error.details[0].message});
+      return res.status(400).json({message: validBooking.error.details[0].message});
     }
 
     try {
